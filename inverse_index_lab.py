@@ -13,7 +13,8 @@ def movie_review(name):
     Input: the name of a movie
     Output: a string (one of the review options), selected at random using randint
     """
-    return ...
+    from random import randint
+    return ["See it!", "A gem!", "Ideological claptrap!"][randint(0, 2)]
 
 
 
@@ -32,7 +33,17 @@ def makeInverseIndex(strlist):
     >>> makeInverseIndex(['hello world','hello','hello cat','hellolot of cats']) == {'hello': {0, 1, 2}, 'cat': {2}, 'of': {3}, 'world': {0}, 'cats': {3}, 'hellolot': {3}}
     True
     """
-    pass
+    inverse_index = {}
+
+    for index, document in enumerate(strlist):
+        for word in document.split():
+            if word in inverse_index:
+                inverse_index[word].add(index)
+            else:
+                inverse_index[word] = {index}
+
+    return inverse_index
+
 
 
 
@@ -49,7 +60,12 @@ def orSearch(inverseIndex, query):
     >>> orSearch(idx, ['Johann', 'Carl'])
     {0, 2, 3, 4, 5}
     """
-    pass
+    ret = set()
+
+    for term in query:
+        ret |= inverseIndex[term]
+
+    return ret
 
 
 
@@ -66,5 +82,9 @@ def andSearch(inverseIndex, query):
     >>> andSearch(idx, ['Johann', 'Bach'])
     {0, 4}
     """
-    pass
+    ret = {v for vs in inverseIndex.values() for v in vs}
 
+    for term in query:
+        ret.intersection_update(inverseIndex[term])
+
+    return ret
